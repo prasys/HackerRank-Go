@@ -3,56 +3,54 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"strconv"
 	"strings"
 )
 
-/*
- * Complete the 'factorial' function below.
- *
- * The function is expected to return an INTEGER.
- * The function accepts INTEGER n as parameter.
- */
+func addEntry(book map[string]int, entry string) {
+	entries := strings.Split(entry, " ")
+	book[entries[0]], _ = strconv.Atoi(entries[1])
 
-func factorial(n int32) int32 {
-	// Write your code here
+}
+
+func checkEntry(book map[string]int, entry string) {
+	_, exists := book[entry]
+	if exists {
+		fmt.Printf("%s=%d \n", entry, book[entry])
+
+	} else {
+		fmt.Println("Not found")
+	}
 
 }
 
 func main() {
-	reader := bufio.NewReaderSize(os.Stdin, 16*1024*1024)
+	//Enter your code here. Read input from STDIN. Print output to STDOUT
+	addressBook := make(map[string]int)
+	scanner := bufio.NewScanner(os.Stdin)
+	entryNum := true
+	entries := 0
+	entryCount := 0
+	for {
+		scanner.Scan()
+		text := scanner.Text()
+		if len(text) == 0 {
+			break
+		}
 
-	stdout, err := os.Create(os.Getenv("OUTPUT_PATH"))
-	checkError(err)
+		if entryNum {
+			entries, _ = strconv.Atoi(text)
+			entryNum = false
+			continue
+		}
+		if entryCount < entries {
+			addEntry(addressBook, text)
+			entryCount++
+		} else {
+			checkEntry(addressBook, text)
+		}
 
-	defer stdout.Close()
-
-	writer := bufio.NewWriterSize(stdout, 16*1024*1024)
-
-	nTemp, err := strconv.ParseInt(strings.TrimSpace(readLine(reader)), 10, 64)
-	checkError(err)
-	n := int32(nTemp)
-
-	result := factorial(n)
-
-	fmt.Fprintf(writer, "%d\n", result)
-
-	writer.Flush()
-}
-
-func readLine(reader *bufio.Reader) string {
-	str, _, err := reader.ReadLine()
-	if err == io.EOF {
-		return ""
 	}
 
-	return strings.TrimRight(string(str), "\r\n")
-}
-
-func checkError(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
